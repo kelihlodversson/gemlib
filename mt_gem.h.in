@@ -2050,6 +2050,15 @@ typedef struct cicon_blk
 /** Bit Field OBject SPECification */
 typedef struct
 {
+	#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	 unsigned	interiorcol :  4;			/**< color of interior */
+	 unsigned	fillpattern :  3;			/**< fill pattern index */
+	 unsigned	textmode    :  1;			/**< transparent or replace */
+	 unsigned	textcol     :  4;			/**< color of text */
+	 unsigned	framecol    :  4;			/**< color of frame */
+	 signed		framesize   :  8;			/**< size of frame */
+	 unsigned	character   :  8;			/**< character to display (BOXCHAR) */
+	#else
 	 unsigned	character   :  8;			/**< character to display (BOXCHAR) */
 	 signed		framesize   :  8;			/**< size of frame */
 	 unsigned	framecol    :  4;			/**< color of frame */
@@ -2057,6 +2066,7 @@ typedef struct
 	 unsigned	textmode    :  1;			/**< transparent or replace */
 	 unsigned	fillpattern :  3;			/**< fill pattern index */
 	 unsigned	interiorcol :  4;			/**< color of interior */
+	#endif
 } BFOBSPEC;
 
 /** User block */

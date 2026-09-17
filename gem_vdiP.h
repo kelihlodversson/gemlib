@@ -20,6 +20,38 @@
 
 #if defined(__GNUC__) && !defined(__NO_INLINE__)
 
+#if defined(__arm__)
+
+static inline void
+_vdi_trap_esc(VDIPB *vdipb, long cntrl_0_1, long cntrl_2_3,
+			  long cntrl_4_5, short handle)
+{
+	short *control = vdipb->control;
+
+	control[0] = (short)(cntrl_0_1 >> 16);
+	control[1] = (short)cntrl_0_1;
+	control[2] = (short)(cntrl_2_3 >> 16);
+	control[3] = (short)cntrl_2_3;
+	control[4] = (short)(cntrl_4_5 >> 16);
+	control[5] = (short)cntrl_4_5;
+	control[6] = handle;
+	vdi(vdipb);
+}
+
+#define VDI_TRAP_ESC(vdipb, handle, opcode, subop, nptsin, nintin) \
+	_vdi_trap_esc(&vdipb, (opcode##uL << 16) | nptsin, nintin, subop, handle)
+
+static inline void
+_vdi_trap_00(VDIPB *vdipb, long cntrl_0_1, short handle)
+{
+	_vdi_trap_esc(vdipb, cntrl_0_1, 0, 0, handle);
+}
+
+#define VDI_TRAP_00(vdipb, handle, opcode) \
+	_vdi_trap_00(&vdipb, (opcode##uL << 16), handle)
+
+#else
+
 static inline void
 _vdi_trap_esc (VDIPB * vdipb,
                long cntrl_0_1, long cntrl_2_3, long cntrl_4_5, short handle)
@@ -64,6 +96,7 @@ _vdi_trap_00 (VDIPB * vdipb, long cntrl_0_1, short handle)
 #define VDI_TRAP_00(vdipb, handle, opcode) \
 	_vdi_trap_00 (&vdipb, (opcode##uL<<16), handle)
 
+#endif
 
 #else 
 
@@ -155,6 +188,30 @@ __regsused("d0/d1/a0/a1") void _vdi_trap_00(
 
 #define N_PTRINTS (sizeof(void *) / sizeof(short))
 
+/* Avoid unaligned control[7..] pointer access. */
+static __inline void
+vdi_control_set_ptr(short *control, short n, const void *value)
+{
+	unsigned char *dest = (unsigned char *)control + (7 + n * N_PTRINTS) * sizeof(*control);
+	const unsigned char *source = (const unsigned char *)&value;
+	unsigned long i;
+
+	for (i = 0; i < sizeof(value); i++)
+		dest[i] = source[i];
+}
+
+static __inline void *
+vdi_control_get_ptr(const short *control, short n)
+{
+	void *value;
+	const unsigned char *source = (const unsigned char *)control + (7 + n * N_PTRINTS) * sizeof(*control);
+	unsigned char *dest = (unsigned char *)&value;
+	unsigned long i;
+
+	for (i = 0; i < sizeof(value); i++)
+		dest[i] = source[i];
+	return value;
+}
 #ifdef __GNUC__
 
 /* to avoid "dereferencing type-punned pointer" */

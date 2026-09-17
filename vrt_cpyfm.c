@@ -42,8 +42,8 @@ vrt_cpyfm (short handle, short mode, short pxy[], MFDB *src, MFDB *dst,
 	vdi_intin[0]            = mode;
 	vdi_intin[1] = color[0];
 	vdi_intin[2] = color[1];
-	vdi_control_ptr(0, MFDB *)      = src;
-	vdi_control_ptr(1, MFDB *)      = dst;
+	vdi_control_set_ptr(vdi_control, 0, src);
+	vdi_control_set_ptr(vdi_control, 1, dst);
 
 	VDI_TRAP (vdi_params, handle, 121, 4,3);
 }

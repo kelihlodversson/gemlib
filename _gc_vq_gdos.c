@@ -3,6 +3,17 @@
 #ifdef __GNUC__
 short vq_gdos(void)
 {
+#if defined(__arm__)
+	register long ret __asm__("r0") = -2;
+
+	__asm__ __volatile__ (
+		"svc #2"
+		: "+r"(ret)
+		:
+		: "r1", "r2", "r3", "r7", "r12", "lr", "memory", "cc"
+	);
+	return ret == -2 ? 0 : 1;
+#else
 	register long ret __asm__("d0");
 
 	__asm__ __volatile__ (
@@ -19,5 +30,6 @@ short vq_gdos(void)
 		: "d1", "d2", "a0", "a1", "a2", "memory", "cc"
 	);
 	return ret;
+#endif
 }
 #endif

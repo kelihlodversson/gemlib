@@ -14,10 +14,22 @@ top_builddir = .
 
 default: all
 
+ARCH ?= m68k
+
+ifeq ($(ARCH),arm)
+CROSS_TOOL ?= arm-none-eabi
+endif
+
 include $(top_srcdir)/CONFIGVARS
 include $(top_srcdir)/RULES
 include $(top_srcdir)/PHONY
 include $(srcdir)/VERSION
+
+ifeq ($(ARCH),arm)
+CFLAGS_arm = -mfloat-abi=hard -mfpu=vfp -mword-relocations
+ARCH_INCLUDES = -I$(srcdir)/include/arm
+ALL_LIBS = arm
+else
 
 CFLAGS_68000 = -m68000
 CFLAGS_68000.short = -m68000 -mshort
@@ -36,7 +48,9 @@ CFLAGS_5475.short.fastcall = -mcpu=5475 -mshort -mfastcall
 ALL_LIBS = 68000 68020-60 68000.short 68020-60.short 5475 5475.short
 BUILD_FAST=$(shell if $(CC) -mfastcall -E - < /dev/null >/dev/null 2>&1; then echo Y; else echo N; fi)
 ifeq ($(BUILD_FAST), Y)
-ALL_LIBS += 68000.fastcall 68020-60.fastcall 68000.short.fastcall 68020-60.short.fastcall 5475.fastcall 5475.short.fastcall
+	ALL_LIBS += 68000.fastcall 68020-60.fastcall 68000.short.fastcall 68020-60.short.fastcall 5475.fastcall 5475.short.fastcall
+endif
+
 endif
 
 all-here: $(foreach LIB, $(ALL_LIBS), .lib$(LIB)/libgem.a)
@@ -63,7 +77,7 @@ OBJS_$(1) = $(foreach FILE, $(COBJS) $(SOBJS), .lib$(1)/$(notdir $(basename $(FI
 endef
 define CC_TEMPLATE
 .lib$(1)/$(notdir $(basename $(2))).o: $(2) mt_gem.h Makefile
-	$$(AM_V_CC)$$(CC) $$(CFLAGS_$(1)) $$(CFLAGS) -I$$(srcdir) -c -o $$@ $$<
+	$$(AM_V_CC)$$(CC) $$(CFLAGS_$(1)) $$(CFLAGS) $$(ARCH_INCLUDES) -I$$(srcdir) -c -o $$@ $$<
 endef
 
 $(foreach DIR,$(ALL_LIBS),$(eval $(call LIB_TEMPLATE,$(DIR))))
@@ -166,6 +180,27 @@ mt_gem.h: mt_gem.h.in VERSION
 	mv $(srcdir)/mt_gem.tmp $(srcdir)/mt_gem.h
 #	$(MOVEIFCHANGE) $(srcdir)/mt_gem.tmp $(srcdir)/mt_gem.h
 
+ifeq ($(ARCH),arm)
+install:
+	install -m 755 -d $(DESTDIR)$(PREFIX)/lib
+	install -m 644 .libarm/libgem.a $(DESTDIR)$(PREFIX)/lib/libgem.a
+	install -m 755 -d $(DESTDIR)$(PREFIX)/include
+	install -m 644 gem.h $(DESTDIR)$(PREFIX)/include
+	install -m 644 gemx.h $(DESTDIR)$(PREFIX)/include
+	install -m 644 mt_gem.h $(DESTDIR)$(PREFIX)/include
+	install -m 644 mt_gemx.h $(DESTDIR)$(PREFIX)/include
+	install -m 644 include/arm/compiler.h $(DESTDIR)$(PREFIX)/include
+
+uninstall:
+	rm -f $(DESTDIR)$(PREFIX)/lib/libgem.a
+	rm -f $(DESTDIR)$(PREFIX)/include/gem.h
+	rm -f $(DESTDIR)$(PREFIX)/include/gemx.h
+	rm -f $(DESTDIR)$(PREFIX)/include/mt_gem.h
+	rm -f $(DESTDIR)$(PREFIX)/include/mt_gemx.h
+	rm -f $(DESTDIR)$(PREFIX)/include/compiler.h
+
+else
+
 install:
 	@for i in $(ALL_LIBS); do \
             cpu=`echo $$i | cut -d . -f 1`; \
@@ -196,6 +231,8 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/include/gemx.h
 	rm -f $(DESTDIR)$(PREFIX)/include/mt_gem.h
 	rm -f $(DESTDIR)$(PREFIX)/include/mt_gemx.h
+
+endif
 
 
 ifneq (clean,$(findstring clean,$(MAKECMDGOALS)))
