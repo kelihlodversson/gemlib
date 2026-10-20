@@ -119,6 +119,7 @@ distdir: $(DISTFILES) distdir-local
 	mkdir -p $(distdir)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
+	  mkdir -p `dirname $(distdir)/$$file` || exit 1; \
 	  test -d $$d/$$file \
 	  || test -f $(distdir)/$$file \
 	  || ln $$d/$$file $(distdir)/$$file 2>/dev/null \

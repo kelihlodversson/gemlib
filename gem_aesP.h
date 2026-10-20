@@ -21,6 +21,19 @@
 
 #if defined(__GNUC__) && !defined(__NO_INLINE__)
 
+#if defined(__arm__)
+
+static inline void
+_aes_trap(AESPB *aespb)
+{
+	/* pTOS ARM passes the AES opcode in r0 and the parameter block in r1. */
+	aes(aespb);
+}
+
+#define AES_TRAP(aespb) _aes_trap(&aespb)
+
+#else
+
 static inline void
 _aes_trap (AESPB * aespb)
 {
@@ -34,6 +47,8 @@ _aes_trap (AESPB * aespb)
 	);
 }
 #define AES_TRAP(aespb) _aes_trap(&aespb)
+
+#endif
 
 #else
 

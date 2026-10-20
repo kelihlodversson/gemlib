@@ -13,6 +13,16 @@
 #ifdef __GNUC__
 void _appl_yield(void)
 {
+#if defined(__arm__)
+	register long r0 __asm__("r0") = 201;
+
+	__asm__ volatile (
+		"svc #2"
+		: "+r"(r0)
+		:
+		: "r1", "r2", "r3", "r7", "r12", "lr", "memory", "cc"
+	);
+#else
 	__asm__ volatile (
 		"move.w	#201,%%d0\n\t"
 		"trap	#2"
@@ -20,6 +30,7 @@ void _appl_yield(void)
 		:
 		: "d0","d1","d2","a0","a1","a2","memory","cc"
 	);
+#endif
 }
 #endif
 
