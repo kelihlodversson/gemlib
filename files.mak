@@ -17,6 +17,7 @@ LIB_GCC281        = lib/gcc281/gem.olb
 LIB_GCC281_MSHORT = lib/gcc281/gem16.olb
 LIB_SOZOBON       = lib/sozobon/gem.a
 LIB_PUREC         = lib/purec/gem.lib
+LIB_X86_64       = libgem.a
 
 # headers
 
@@ -35,3 +36,4 @@ GC_OBJ =
 PC_OBJ = _pc_asm.o
 VC_OBJ = 
 LA_OBJ = _lc_asm.o
+X86_OBJ = _pc_asm_x86_64.o
