@@ -20,7 +20,7 @@ aes:
 	/* RDI = parameter block pointer (32-bit in ILP32) */
 	movl	%edi, %edx		/* d1 = pb (32-bit) */
 	movl	$200, %eax		/* d0 = 200 (AES trap) */
-	orl	$(2 << 32), %eax		/* trap = 2 in upper 32 bits */
+	orl	$0x200000000, %eax		/* trap = 2 in upper 32 bits */
 	movl	%edx, %edi
 	syscall
 	ret
@@ -32,7 +32,7 @@ vdi:
 	/* RDI = parameter block pointer (32-bit in ILP32) */
 	movl	%edi, %edx		/* d1 = pb (32-bit) */
 	movl	$115, %eax		/* d0 = 115 (VDI trap) */
-	orl	$(2 << 32), %eax		/* trap = 2 in upper 32 bits */
+	orl	$0x200000000, %eax		/* trap = 2 in upper 32 bits */
 	movl	%edx, %edi
 	syscall
 	ret
@@ -42,7 +42,7 @@ vdi:
 	.align	4
 vq_gdos:
 	movl	$-2, %eax		/* d0 = -2 */
-	orl	$(2 << 32), %eax		/* trap = 2 in upper 32 bits */
+	orl	$0x200000000, %eax		/* trap = 2 in upper 32 bits */
 	syscall
 	cmpl	$-2, %eax
 	sete	%al
@@ -54,7 +54,7 @@ vq_gdos:
 	.align	4
 vq_vgdos:
 	movl	$-2, %eax		/* d0 = -2 */
-	orl	$(2 << 32), %eax		/* trap = 2 in upper 32 bits */
+	orl	$0x200000000, %eax		/* trap = 2 in upper 32 bits */
 	syscall
 	cmpl	$-2, %eax
 	jne	1f

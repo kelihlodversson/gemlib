@@ -17,7 +17,7 @@
 _aes:
 	movl	4(%rsp), %edx		/* d1 = pb (32-bit) */
 	movl	$200, %eax		/* d0 = 200 (AES trap) */
-	orl	$(2 << 32), %eax		/* trap = 2 in upper 32 bits */
+	orl	$0x200000000, %eax		/* trap = 2 in upper 32 bits */
 	movl	%edx, %edi
 	syscall
 	ret
@@ -28,7 +28,7 @@ _aes:
 _vdi:
 	movl	4(%rsp), %edx		/* d1 = pb (32-bit) */
 	movl	$115, %eax		/* d0 = 115 (VDI trap) */
-	orl	$(2 << 32), %eax		/* trap = 2 in upper 32 bits */
+	orl	$0x200000000, %eax		/* trap = 2 in upper 32 bits */
 	movl	%edx, %edi
 	syscall
 	ret
@@ -38,7 +38,7 @@ _vdi:
 	.align	4
 _vq_gdos:
 	movl	$-2, %eax		/* d0 = -2 */
-	orl	$(2 << 32), %eax		/* trap = 2 in upper 32 bits */
+	orl	$0x200000000, %eax		/* trap = 2 in upper 32 bits */
 	syscall
 	cmpl	$-2, %eax
 	sete	%al
@@ -50,7 +50,7 @@ _vq_gdos:
 	.align	4
 _vq_vgdos:
 	movl	$-2, %eax		/* d0 = -2 */
-	orl	$(2 << 32), %eax		/* trap = 2 in upper 32 bits */
+	orl	$0x200000000, %eax		/* trap = 2 in upper 32 bits */
 	syscall
 	cmpl	$-2, %eax
 	bne	1f
