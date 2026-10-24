@@ -20,6 +20,10 @@ ifeq ($(ARCH),arm)
 CROSS_TOOL ?= arm-none-eabi
 endif
 
+ifeq ($(ARCH),x86_64)
+CROSS_TOOL ?= x86_64-elf
+endif
+
 include $(top_srcdir)/CONFIGVARS
 include $(top_srcdir)/RULES
 include $(top_srcdir)/PHONY
@@ -29,6 +33,10 @@ ifeq ($(ARCH),arm)
 CFLAGS_arm = -mfloat-abi=hard -mfpu=vfp -mword-relocations
 ARCH_INCLUDES = -I$(srcdir)/include/arm
 ALL_LIBS = arm
+else ifeq ($(ARCH),x86_64)
+CFLAGS_x86_64 = -mx32 -ffreestanding
+ARCH_INCLUDES = 
+ALL_LIBS = x86_64
 else
 
 CFLAGS_68000 = -m68000
@@ -54,6 +62,20 @@ endif
 endif
 
 all-here: $(foreach LIB, $(ALL_LIBS), .lib$(LIB)/libgem.a)
+
+x86_64: .libx86_64/libgem.a
+
+.libx86_64/libgem.a:: $(patsubst %.c,.libx86_64/%.o,$(COBJS)) _pc_asm_x86_64.o
+	@mkdir -p .libx86_64
+	$(AR) crs $@ $^
+
+.libx86_64/%.o: %.c mt_gem.h Makefile
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS_x86_64) $(CFLAGS) -I$(srcdir) -c -o $@ $<
+
+.libx86_64/_pc_asm_x86_64.o: _pc_asm_x86_64.S mt_gem.h Makefile
+	@mkdir -p .libx86_64
+	$(CC) $(CFLAGS_x86_64) $(CFLAGS) -I$(srcdir) -c -o $@ $<
 
 dist: distdir
 	-chmod -R a+r $(distdir) 
