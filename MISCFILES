@@ -3,4 +3,4 @@
 
 MISCFILES = gem.h gemx.h mt_gem.h mt_gemx.h include/arm/compiler.h
 
-MISCFILES += $(wildcard ptos/*.c ptos/*.h ptos/*.mk ptos/*.md) tests/ptos-bindings.c
+MISCFILES += $(wildcard ptos/*.c ptos/*.h ptos/*.mk ptos/*.md) tests/ptos-bindings.c tests/ptos-headers.cpp

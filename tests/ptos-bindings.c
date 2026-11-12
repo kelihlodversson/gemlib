@@ -42,5 +42,7 @@ int main(void)
     if (_AESappglobal != 0x12345678L || !inside(10,20,&a) || inside(40,20,&a)) return 8;
     if (!rc_intersect(&a,&b) || b.g_x != 20 || b.g_y != 30 || b.g_w != 20 || b.g_h != 30) return 9;
     if (wind_find(3,4) != 7) return 10;
+    a = (GRECT){ 30000,0,4000,10 }; b = a;
+    if (!rc_intersect(&a,&b) || b.g_x != 30000 || b.g_y || b.g_w != 4000 || b.g_h != 10) return 11;
     return 0;
 }

@@ -3,10 +3,10 @@
 #ifndef GEMLIB_PTOS_GEM_H
 #define GEMLIB_PTOS_GEM_H
 #include "mt_gem.h"
-#include <rectfunc.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <rectfunc.h>
 extern AESGLOBAL aes_global;
 extern short gl_apid, gl_ap_version;
 #define _AESversion (aes_global.ap_version)

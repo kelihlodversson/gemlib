@@ -16,10 +16,10 @@
 
 WORD rc_intersect(const GRECT *p1, GRECT *p2)
 {
-    WORD tx, ty, tw, th;
+    LONG tx, ty, tw, th;
 
-    tw = min(p2->g_x + p2->g_w, p1->g_x + p1->g_w);
-    th = min(p2->g_y + p2->g_h, p1->g_y + p1->g_h);
+    tw = min((LONG)p2->g_x + p2->g_w, (LONG)p1->g_x + p1->g_w);
+    th = min((LONG)p2->g_y + p2->g_h, (LONG)p1->g_y + p1->g_h);
     tx = max(p2->g_x, p1->g_x);
     ty = max(p2->g_y, p1->g_y);
 
