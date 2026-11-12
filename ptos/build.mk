@@ -23,14 +23,16 @@ endif
 PTOS_CFLAGS = $(PTOS_FLAGS_$(ARCH)) -std=gnu90 -Os -ffreestanding \
               -fno-builtin -fno-stack-protector -ffunction-sections -fdata-sections \
               -Wall -Wextra -Werror -MMD -MP -Iptos -I$(PTOS_INCLUDE)
-PTOS_OBJECTS = $(PTOS_BUILD)/bindings.o $(PTOS_BUILD)/rectangles.o
+PTOS_SOURCES = $(wildcard ptos/a_*.c ptos/rc_*.c) ptos/globals.c
+PTOS_OBJECTS = $(patsubst ptos/%.c,$(PTOS_BUILD)/%.o,$(PTOS_SOURCES))
 
 .PHONY: all clean install
 all: $(PTOS_BUILD)/libgem.a
-$(PTOS_BUILD)/%.o: ptos/%.c ptos/gem.h ptos/mt_gem.h
+$(PTOS_BUILD)/%.o: ptos/%.c ptos/gem.h ptos/mt_gem.h ptos/build.mk
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(PTOS_CFLAGS) -c $< -o $@
 $(PTOS_BUILD)/libgem.a: $(PTOS_OBJECTS)
+	rm -f $@
 	$(AR) rcs $@ $^
 clean:
 	rm -rf $(PTOS_BUILD)

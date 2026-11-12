@@ -20,6 +20,9 @@ short mt_wind_create(short kind, short x, short y, short w, short h, AESGLOBAL *
     received = global;
     return kind == 1 && x == 2 && y == 3 && w == 4 && h == 5 ? 23 : -1;
 }
+/* EmuDesk supplies some classic bindings itself. Extracting an unrelated
+ * binding from the archive must not introduce another definition of this one. */
+short wind_find(short x, short y) { return x + y; }
 int main(void)
 {
     AESGLOBAL other = { 0 };
@@ -36,5 +39,6 @@ int main(void)
     if (appl_exit() != 1 || gl_apid != -1 || gl_ap_version || aes_global.ap_id != -1) return 7;
     if (_AESappglobal != 0x12345678L || !inside(10,20,&a) || inside(40,20,&a)) return 8;
     if (!rc_intersect(&a,&b) || b.g_x != 20 || b.g_y != 30 || b.g_w != 20 || b.g_h != 30) return 9;
+    if (wind_find(3,4) != 7) return 10;
     return 0;
 }
