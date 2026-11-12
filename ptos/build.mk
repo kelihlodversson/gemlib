@@ -18,7 +18,7 @@ ifeq ($(origin CC),default)
 CC = $(PTOS_CC_$(ARCH))
 endif
 ifeq ($(origin AR),default)
-AR = $(patsubst %gcc,%ar,$(CC))
+AR = $(patsubst %gcc,%ar,$(PTOS_CC_$(ARCH)))
 endif
 PTOS_CFLAGS = $(PTOS_FLAGS_$(ARCH)) -std=gnu90 -Os -ffreestanding \
               -fno-builtin -fno-stack-protector -ffunction-sections -fdata-sections \

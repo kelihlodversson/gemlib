@@ -56,6 +56,6 @@ jobs:
           if grep ' mt_' bindings.symbols; then exit 1; fi
       - name: Exercise binding ownership and forwarding
         run: |
-          make BACKEND=ptos ARCH=x32 PTOS_FLAGS_x32= PTOS_BUILD=.libptos-host PTOS_INCLUDE="$PWD/ptos-sdk/include"
+          make BACKEND=ptos ARCH=x32 CC=cc PTOS_FLAGS_x32= PTOS_BUILD=.libptos-host PTOS_INCLUDE="$PWD/ptos-sdk/include"
           cc -std=gnu90 -Wall -Wextra -Werror -Iptos -Iptos-sdk/include -Wl,--gc-sections tests/ptos-bindings.c .libptos-host/libgem.a -o ptos-bindings-test
           ./ptos-bindings-test
