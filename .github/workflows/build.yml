@@ -37,3 +37,25 @@ jobs:
           COMMITER_NAME: ${{ github.event.commits[0].author.name }}
           COMMITER_EMAIL: ${{ github.event.commits[0].author.email }}
         run: ./.scripts/deploy.sh
+
+  ptos-bindings:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: kelihlodversson/pTOS
+          ref: ef79767c0a452bb98d5085875d4780b300117462
+          path: ptos-sdk
+      - name: Build native x32 bindings
+        run: |
+          make BACKEND=ptos ARCH=x32 PTOS_INCLUDE="$PWD/ptos-sdk/include"
+          nm -g --defined-only .libptos-x32/libgem.a > bindings.symbols
+          grep ' aes_global$' bindings.symbols
+          grep ' appl_init$' bindings.symbols
+          if grep ' mt_' bindings.symbols; then exit 1; fi
+      - name: Exercise binding ownership and forwarding
+        run: |
+          make BACKEND=ptos ARCH=x32 PTOS_FLAGS_x32= PTOS_BUILD=.libptos-host PTOS_INCLUDE="$PWD/ptos-sdk/include"
+          cc -std=gnu90 -Wall -Wextra -Werror -Iptos -Iptos-sdk/include -Wl,--gc-sections tests/ptos-bindings.c .libptos-host/libgem.a -o ptos-bindings-test
+          ./ptos-bindings-test
