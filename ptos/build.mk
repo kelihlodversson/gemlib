@@ -23,7 +23,7 @@ endif
 PTOS_CFLAGS = $(PTOS_FLAGS_$(ARCH)) -std=gnu90 -Os -ffreestanding \
               -fno-builtin -fno-stack-protector -ffunction-sections -fdata-sections \
               -Wall -Wextra -Werror -MMD -MP -Iptos -I$(PTOS_INCLUDE)
-PTOS_SOURCES = $(wildcard ptos/a_*.c ptos/rc_*.c) ptos/globals.c
+PTOS_SOURCES = $(wildcard ptos/*.c)
 PTOS_OBJECTS = $(patsubst ptos/%.c,$(PTOS_BUILD)/%.o,$(PTOS_SOURCES))
 
 .PHONY: all clean install

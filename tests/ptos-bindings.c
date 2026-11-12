@@ -1,5 +1,7 @@
 /* Verify binding ownership, explicit globals, argument forwarding and helpers. */
 #include "gem.h"
+/* EmuDesk supplies its own application-id variable. */
+short gl_apid = -1;
 static AESGLOBAL *received;
 static short closed = 1;
 short mt_appl_init(AESGLOBAL *global)

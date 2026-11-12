@@ -3,4 +3,3 @@
 #include "gem.h"
 
 AESGLOBAL aes_global = { .ap_id = -1 };
-short gl_apid = -1, gl_ap_version;
