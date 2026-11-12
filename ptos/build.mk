@@ -8,8 +8,8 @@ PREFIX ?= /usr
 PTOS_CC_x32 = gcc
 PTOS_CC_arm = arm-none-eabi-gcc
 PTOS_CC_m68k = m68k-atari-mintelf-gcc
-PTOS_FLAGS_x32 = -mx32 -march=x86-64
-PTOS_FLAGS_arm = -march=armv6k -marm -mfpu=vfp -mfloat-abi=hard
+PTOS_FLAGS_x32 = -mx32 -march=x86-64 -fPIC
+PTOS_FLAGS_arm = -march=armv6k -marm -mfpu=vfp -mfloat-abi=hard -fPIC
 PTOS_FLAGS_m68k = -m68020
 ifeq ($(PTOS_CC_$(ARCH)),)
 $(error Unknown native pTOS architecture: $(ARCH))
@@ -20,7 +20,7 @@ endif
 ifeq ($(origin AR),default)
 AR = $(patsubst %gcc,%ar,$(CC))
 endif
-PTOS_CFLAGS = $(PTOS_FLAGS_$(ARCH)) -std=gnu90 -Os -ffreestanding -fPIC \
+PTOS_CFLAGS = $(PTOS_FLAGS_$(ARCH)) -std=gnu90 -Os -ffreestanding \
               -fno-builtin -fno-stack-protector -ffunction-sections -fdata-sections \
               -Wall -Wextra -Werror -MMD -MP -Iptos -I$(PTOS_INCLUDE)
 PTOS_OBJECTS = $(PTOS_BUILD)/bindings.o $(PTOS_BUILD)/rectangles.o
