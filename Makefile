@@ -1,3 +1,6 @@
+ifeq ($(BACKEND),ptos)
+include ptos/build.mk
+else
 #
 # Makefile for gemlib, the VDI & AES bindings
 # gemxlib, bindings for VDI & AES extensions
@@ -238,3 +241,5 @@ endif
 ifneq (clean,$(findstring clean,$(MAKECMDGOALS)))
 DEPS_MAGIC := $(shell mkdir -p $(foreach LIB, $(ALL_LIBS), .lib$(LIB))) > /dev/null 2>&1 || :)
 endif
+
+endif # BACKEND=ptos
