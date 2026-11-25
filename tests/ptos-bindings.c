@@ -4,6 +4,9 @@
 short gl_apid = -1;
 static AESGLOBAL *received;
 static short closed = 1;
+static const char program[] = "C:\\APP.PRG";
+static char *const input_args[] = { "alias", "", 0 }, *const input_env[] = {0};
+static const char *const original_args[] = { "alias", "", 0 }, *const original_env[] = {0};
 short mt_appl_init(AESGLOBAL *global)
 {
     received = global;
@@ -22,6 +25,21 @@ short mt_wind_create(short kind, short x, short y, short w, short h, AESGLOBAL *
     received = global;
     return kind == 1 && x == 2 && y == 3 && w == 4 && h == 5 ? 23 : -1;
 }
+short mt_shel_readve(const char **path, const char *const **argv, const char *const **envp, AESGLOBAL *global)
+{
+    received = global;
+    *path = program;
+    *argv = original_args;
+    *envp = original_env;
+    return 1;
+}
+short mt_shel_writeve(short mode, short graphical, short execution, const void *command,
+                      char *const argv[], char *const envp[], AESGLOBAL *global)
+{
+    received = global;
+    return mode == SWM_LAUNCHNOW && graphical == GEMAPP && execution == SHW_CHAIN &&
+        command == program && argv == input_args && envp == input_env;
+}
 /* EmuDesk supplies some classic bindings itself. Extracting an unrelated
  * binding from the archive must not introduce another definition of this one. */
 short wind_find(short x, short y) { return x + y; }
@@ -29,10 +47,16 @@ int main(void)
 {
     AESGLOBAL other = { 0 };
     GRECT a = { 10,20,30,40 }, b = { 20,30,40,50 };
+    const char *path;
+    const char *const *argv, *const *envp;
     if (gl_apid != -1 || aes_global.ap_id != -1 || gl_ap_version) return 1;
     aes_global.ap_private = 0x12345678L;
     if (appl_init() != 17 || received != &aes_global || gl_apid != 17 || gl_ap_version != 0x400) return 2;
     if (wind_create(1,2,3,4,5) != 23 || received != &aes_global) return 3;
+    if (!shel_readve(&path,&argv,&envp) || received != &aes_global ||
+        path != program || argv != original_args || envp != original_env) return 12;
+    if (!shel_writeve(SWM_LAUNCHNOW,GEMAPP,SHW_CHAIN,program,input_args,input_env) ||
+        received != &aes_global) return 13;
     if (mt_appl_init(&other) != 17 || received != &other || other.ap_id != 17) return 4;
     if (mt_appl_exit(&other) != 1 || aes_global.ap_id != 17 || gl_apid != 17) return 5;
     closed = 0;

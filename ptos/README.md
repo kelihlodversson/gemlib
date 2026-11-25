@@ -20,3 +20,7 @@ pTOS's separate VDI bindings.
 they never discover, reset or synchronize GEMlib's default binding state.
 `ap_private` remains owned by the caller. Context lifetime and CUIS identity
 are libaes contracts, not responsibilities of this binding archive.
+
+`shel_readve()` and `shel_writeve()` require the native vector shell API from
+the matching pTOS SDK and libaes. `shel_readve()` borrows the immutable launch
+path and vectors through the active `aes_global` context until `appl_exit()`.

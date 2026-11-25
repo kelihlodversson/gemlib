@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: kelihlodversson/pTOS
-          ref: ef79767c0a452bb98d5085875d4780b300117462
+          ref: ead094c973201316d21ffdbb3273ab30ca722bdf
           path: ptos-sdk
       - name: Build native x32 bindings
         run: |
@@ -53,6 +53,8 @@ jobs:
           nm -g --defined-only .libptos-x32/libgem.a > bindings.symbols
           grep ' aes_global$' bindings.symbols
           grep ' appl_init$' bindings.symbols
+          grep ' shel_readve$' bindings.symbols
+          grep ' shel_writeve$' bindings.symbols
           if grep ' mt_' bindings.symbols; then exit 1; fi
       - name: Exercise binding ownership and forwarding
         run: |
