@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: kelihlodversson/pTOS
-          ref: ead094c973201316d21ffdbb3273ab30ca722bdf
+          ref: b7b1c0d2ba917b2e1e20ae43a49b3290d4464b23
           path: ptos-sdk
       - name: Build native x32 bindings
         run: |
