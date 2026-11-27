@@ -89,8 +89,11 @@ short shel_get(char *buffer, short length);
 short shel_put(const char *buffer, short length);
 void shel_rdef(char *command, char *directory);
 short shel_read(char *command, char *tail);
+short shel_readve(const char **path, const char *const **argv, const char *const **envp);
 void shel_wdef(const char *command, const char *directory);
 short shel_write(short mode, short graphical, short execution, const void *command, const char *tail);
+short shel_writeve(short mode, short graphical, short execution, const void *command,
+                   char *const argv[], char *const envp[]);
 short wind_calc(short type, short kind, short x, short y, short w, short h, short *ox, short *oy, short *ow, short *oh);
 short wind_calc_grect(short type, short kind, const GRECT *in, GRECT *out);
 short wind_close(short id);
